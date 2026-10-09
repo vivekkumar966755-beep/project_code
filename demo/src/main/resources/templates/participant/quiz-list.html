@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Available quizzes')}"></head>
+<body class="app-shell">
+<header th:replace="~{fragments/layout :: header('quizzes')}"></header>
+<main class="page">
+    <div class="card">
+        <div class="toolbar">
+            <div>
+                <div class="kicker">Exam hall</div>
+                <h2>Published quizzes</h2>
+            </div>
+            <a class="btn secondary" th:href="@{/participant/history}">My results</a>
+        </div>
+        <table>
+            <thead>
+            <tr>
+                <th>Title</th>
+                <th>Author</th>
+                <th>Duration</th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="quiz : ${quizzes}">
+                <td th:text="${quiz.title}">Title</td>
+                <td th:text="${quiz.creator != null ? quiz.creator.name : 'Faculty'}">Author</td>
+                <td th:text="${quiz.duration} + ' min'">10</td>
+                <td>
+                    <a class="btn" th:href="@{/quizzes/{id}/take(id=${quiz.id})}">Start</a>
+                </td>
+            </tr>
+            <tr th:if="${#lists.isEmpty(quizzes)}">
+                <td colspan="4" class="empty">Nothing published yet. Check back after review.</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</main>
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>

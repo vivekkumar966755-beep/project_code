@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/layout :: head('Home')}"></head>
+<body class="app-shell">
+<header th:replace="~{fragments/layout :: header('home')}"></header>
+<main class="page">
+    <section class="hero">
+        <div>
+            <div class="kicker">Role-based quiz platform</div>
+            <h1>Design, approve, and sit exams with quiet precision.</h1>
+            <p class="lead">Apex Quiz gives administrators control, creators a studio, and participants a focused exam room — all behind Spring Security roles.</p>
+            <div class="actions">
+                <a class="btn" sec:authorize="!isAuthenticated()" th:href="@{/register}">Create your workspace</a>
+                <a class="btn" sec:authorize="isAuthenticated()" th:href="@{/quizzes}">Enter the exam hall</a>
+                <a class="btn secondary" th:href="@{/login}">Sign in</a>
+            </div>
+        </div>
+        <div class="hero-panel">
+            <h3>Three roles. One platform.</h3>
+            <ul>
+                <li><strong>Admin</strong> — approve quizzes, manage users, watch the live catalog.</li>
+                <li><strong>Creator</strong> — compose assessments and submit them for review.</li>
+                <li><strong>Participant</strong> — take published quizzes and keep a score history.</li>
+            </ul>
+        </div>
+    </section>
+</main>
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>

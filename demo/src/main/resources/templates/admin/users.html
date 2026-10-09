@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Users')}"></head>
+<body class="app-shell">
+<header th:replace="~{fragments/layout :: header('admin')}"></header>
+<main class="page">
+    <div class="card">
+        <div class="toolbar">
+            <div>
+                <div class="kicker">Directory</div>
+                <h2>People on the platform</h2>
+            </div>
+            <a class="btn secondary" th:href="@{/admin/dashboard}">Dashboard</a>
+        </div>
+        <div th:if="${success}" class="notice ok" th:text="${success}"></div>
+        <div th:if="${error}" class="notice error" th:text="${error}"></div>
+        <table>
+            <thead>
+            <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Role</th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="user : ${users}">
+                <td th:text="${user.name}">Name</td>
+                <td th:text="${user.email}">email</td>
+                <td><span class="badge" th:text="${user.role}">ROLE</span></td>
+                <td>
+                    <form th:action="@{/admin/users/delete/{id}(id=${user.id})}" method="post"
+                          onsubmit="return confirm('Remove this user?');">
+                        <button class="btn danger" type="submit">Remove</button>
+                    </form>
+                </td>
+            </tr>
+            <tr th:if="${#lists.isEmpty(users)}">
+                <td colspan="4" class="empty">No users found.</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</main>
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>

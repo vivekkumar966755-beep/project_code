@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Quiz review')}"></head>
+<body class="app-shell">
+<header th:replace="~{fragments/layout :: header('admin')}"></header>
+<main class="page">
+    <div class="card">
+        <div class="toolbar">
+            <div>
+                <div class="kicker">Moderation</div>
+                <h2>Quiz catalog</h2>
+            </div>
+            <a class="btn secondary" th:href="@{/admin/users}">Users</a>
+        </div>
+        <div th:if="${success}" class="notice ok" th:text="${success}"></div>
+        <table>
+            <thead>
+            <tr>
+                <th>Title</th>
+                <th>Creator</th>
+                <th>Duration</th>
+                <th>Status</th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="quiz : ${quizzes}">
+                <td th:text="${quiz.title}">Title</td>
+                <td th:text="${quiz.creator != null ? quiz.creator.name : '—'}">Creator</td>
+                <td th:text="${quiz.duration} + ' min'">10</td>
+                <td>
+                    <span class="badge"
+                          th:classappend="${quiz.status.name() == 'APPROVED'} ? ' ok' : (${quiz.status.name() == 'REJECTED'} ? ' danger' : ' warn')"
+                          th:text="${quiz.status}">PENDING</span>
+                </td>
+                <td class="inline-forms">
+                    <form th:action="@{/admin/quizzes/approve/{id}(id=${quiz.id})}" method="post">
+                        <button class="btn" type="submit">Approve</button>
+                    </form>
+                    <form th:action="@{/admin/quizzes/reject/{id}(id=${quiz.id})}" method="post">
+                        <button class="btn danger" type="submit">Reject</button>
+                    </form>
+                </td>
+            </tr>
+            <tr th:if="${#lists.isEmpty(quizzes)}">
+                <td colspan="5" class="empty">No quizzes submitted yet.</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</main>
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>

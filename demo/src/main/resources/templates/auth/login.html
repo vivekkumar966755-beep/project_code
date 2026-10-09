@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Sign in')}"></head>
+<body class="auth-wrap">
+    <div class="auth-card">
+        <div class="kicker">Welcome back</div>
+        <h2>Sign in to Apex Quiz</h2>
+        <p class="muted">Use the email you registered with.</p>
+        <div th:if="${param.error}" class="notice error">Invalid email or password.</div>
+        <div th:if="${param.logout}" class="notice ok">You have been signed out.</div>
+        <div th:if="${success}" class="notice ok" th:text="${success}"></div>
+        <form th:action="@{/login}" method="post" class="form-grid" style="margin-top:20px;">
+            <div>
+                <label for="username">Email</label>
+                <input id="username" type="email" name="username" placeholder="you@company.com" required/>
+            </div>
+            <div>
+                <label for="password">Password</label>
+                <input id="password" type="password" name="password" required/>
+            </div>
+            <button class="btn" type="submit">Continue</button>
+        </form>
+        <p class="muted" style="margin-top:18px;">New here? <a th:href="@{/register}">Create an account</a></p>
+        <p class="muted">Seed admin: admin@quizplatform.local</p>
+    </div>
+</body>
+</html>

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('History')}"></head>
+<body class="app-shell">
+<header th:replace="~{fragments/layout :: header('history')}"></header>
+<main class="page">
+    <div class="card">
+        <div class="kicker">Transcript</div>
+        <h2>Your previous attempts</h2>
+        <table>
+            <thead>
+            <tr>
+                <th>Quiz</th>
+                <th>Score</th>
+                <th>When</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="result : ${results}">
+                <td th:text="${result.quiz.title}">Quiz</td>
+                <td th:text="${result.score} + ' / ' + ${result.totalQuestions}">0/0</td>
+                <td th:text="${#temporals.format(result.takenAt, 'dd MMM yyyy HH:mm')}">date</td>
+            </tr>
+            <tr th:if="${#lists.isEmpty(results)}">
+                <td colspan="3" class="empty">No attempts yet.</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</main>
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>

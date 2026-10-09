@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Add questions')}"></head>
+<body class="app-shell">
+<header th:replace="~{fragments/layout :: header('creator')}"></header>
+<main class="page">
+    <div class="card">
+        <div class="kicker">Question bank</div>
+        <h2 th:text="'Questions for ' + ${quiz.title}">Questions</h2>
+        <div th:if="${success}" class="notice ok" th:text="${success}"></div>
+        <form th:action="@{/creator/quizzes/{id}/add-questions(id=${quiz.id})}" method="post" class="form-grid">
+            <div>
+                <label>Question</label>
+                <input type="text" name="questionText" required placeholder="What does @Transactional do?"/>
+            </div>
+            <div>
+                <label>Option A</label>
+                <input type="text" name="optionA" required/>
+            </div>
+            <div>
+                <label>Option B</label>
+                <input type="text" name="optionB" required/>
+            </div>
+            <div>
+                <label>Option C</label>
+                <input type="text" name="optionC" required/>
+            </div>
+            <div>
+                <label>Option D</label>
+                <input type="text" name="optionD" required/>
+            </div>
+            <div>
+                <label>Correct option</label>
+                <select name="correctoption" required>
+                    <option value="A">A</option>
+                    <option value="B">B</option>
+                    <option value="C">C</option>
+                    <option value="D">D</option>
+                </select>
+            </div>
+            <button class="btn" type="submit">Add question</button>
+        </form>
+        <h3 style="margin-top:32px;">Added so far</h3>
+        <div th:each="question, iter : ${questions}" class="question-card">
+            <p><strong th:text="${iter.count} + '. ' + ${question.questionText}">Q</strong></p>
+            <p class="muted" th:text="'A) ' + ${question.optionA} + ' · B) ' + ${question.optionB} + ' · C) ' + ${question.optionC} + ' · D) ' + ${question.optionD}">options</p>
+        </div>
+        <p th:if="${#lists.isEmpty(questions)}" class="empty">No questions yet.</p>
+        <div class="actions">
+            <a class="btn secondary" th:href="@{/creator/dashboard}">Finish</a>
+        </div>
+    </div>
+</main>
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>

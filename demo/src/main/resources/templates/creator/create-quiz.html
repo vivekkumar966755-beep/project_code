@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Create quiz')}"></head>
+<body class="app-shell">
+<header th:replace="~{fragments/layout :: header('creator')}"></header>
+<main class="page">
+    <div class="card" style="max-width:640px;margin:auto;">
+        <div class="kicker">New assessment</div>
+        <h2>Create a quiz</h2>
+        <p class="muted">It will stay in review until an administrator publishes it.</p>
+        <form th:action="@{/creator/quizzes/create}" method="post" class="form-grid" style="margin-top:20px;">
+            <div>
+                <label for="title">Title</label>
+                <input id="title" type="text" name="title" required placeholder="Java Collections Mastery"/>
+            </div>
+            <div>
+                <label for="duration">Duration (minutes)</label>
+                <input id="duration" type="number" name="duration" min="1" required value="15"/>
+            </div>
+            <button class="btn" type="submit">Save and add questions</button>
+        </form>
+    </div>
+</main>
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>

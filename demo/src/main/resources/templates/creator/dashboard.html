@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Creator studio')}"></head>
+<body class="app-shell">
+<header th:replace="~{fragments/layout :: header('creator')}"></header>
+<main class="page">
+    <div class="kicker">Creator studio</div>
+    <h1>Compose and ship assessments.</h1>
+    <div class="stats">
+        <div class="stat"><span>Your quizzes</span><strong th:text="${quizCount}">0</strong></div>
+        <div class="stat"><span>Pending review</span><strong th:text="${pendingCount}">0</strong></div>
+        <div class="stat"><span>Published</span><strong th:text="${approvedCount}">0</strong></div>
+        <div class="stat"><span>Workspace</span><strong>Live</strong></div>
+    </div>
+    <div class="actions">
+        <a class="btn" th:href="@{/creator/quizzes/create}">New quiz</a>
+        <a class="btn secondary" th:href="@{/creator/quizzes}">My library</a>
+    </div>
+</main>
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>

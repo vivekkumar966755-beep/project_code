@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:fragment="head(title)">
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title th:text="${title} + ' · Apex Quiz'">Apex Quiz</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com"/>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+    <link rel="stylesheet" th:href="@{/css/app.css}"/>
+</head>
+<body>
+<header th:fragment="header(active)" class="topbar">
+    <a class="brand" th:href="@{/}">
+        <span class="brand-mark">AQ</span>
+        <span>Apex Quiz</span>
+    </a>
+    <nav class="nav-links">
+        <a th:href="@{/}" th:classappend="${active == 'home'} ? 'active'">Home</a>
+        <a sec:authorize="isAuthenticated()" th:href="@{/quizzes}" th:classappend="${active == 'quizzes'} ? 'active'">Quizzes</a>
+        <a sec:authorize="hasRole('ADMIN')" th:href="@{/admin/dashboard}" th:classappend="${active == 'admin'} ? 'active'">Admin</a>
+        <a sec:authorize="hasAnyRole('CREATOR','ADMIN')" th:href="@{/creator/dashboard}" th:classappend="${active == 'creator'} ? 'active'">Creator</a>
+        <a sec:authorize="isAuthenticated()" th:href="@{/participant/history}" th:classappend="${active == 'history'} ? 'active'">History</a>
+        <a sec:authorize="!isAuthenticated()" th:href="@{/login}">Sign in</a>
+        <a sec:authorize="!isAuthenticated()" th:href="@{/register}">Join</a>
+        <form sec:authorize="isAuthenticated()" th:action="@{/logout}" method="post" style="margin:0;">
+            <button class="linkish" type="submit">Sign out</button>
+        </form>
+    </nav>
+</header>
+<footer th:fragment="footer" class="footer">
+    Apex Quiz · Role-based assessments for teams that take learning seriously.
+</footer>
+</body>
+</html>

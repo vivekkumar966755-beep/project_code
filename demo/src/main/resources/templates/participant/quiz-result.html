@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Result')}"></head>
+<body class="app-shell">
+<header th:replace="~{fragments/layout :: header('quizzes')}"></header>
+<main class="page">
+    <div class="card" style="text-align:center;max-width:640px;margin:auto;">
+        <div class="kicker">Attempt complete</div>
+        <h2 th:text="${quiz.title}">Quiz</h2>
+        <p class="lead">Your score</p>
+        <h1>
+            <span th:text="${score}">0</span>
+            <span class="muted">/</span>
+            <span th:text="${totalQuestions}">0</span>
+        </h1>
+        <div class="actions" style="justify-content:center;">
+            <a class="btn" th:href="@{/quizzes}">More quizzes</a>
+            <a class="btn secondary" th:href="@{/participant/history}">History</a>
+        </div>
+    </div>
+</main>
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>

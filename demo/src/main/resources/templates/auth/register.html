@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Join')}"></head>
+<body class="auth-wrap">
+    <div class="auth-card">
+        <div class="kicker">Get started</div>
+        <h2>Create your account</h2>
+        <p class="muted">Join as a creator or participant. Admin access is provisioned separately.</p>
+        <div th:if="${error}" class="notice error" th:text="${error}"></div>
+        <form th:action="@{/register}" th:object="${user}" method="post" class="form-grid" style="margin-top:20px;">
+            <div>
+                <label>Full name</label>
+                <input type="text" th:field="*{name}" placeholder="Alex Morgan" required/>
+            </div>
+            <div>
+                <label>Email</label>
+                <input type="email" th:field="*{email}" placeholder="alex@company.com" required/>
+            </div>
+            <div>
+                <label>Password</label>
+                <input type="password" th:field="*{password}" minlength="6" required/>
+            </div>
+            <div>
+                <label>Role</label>
+                <select th:field="*{role}" required>
+                    <option th:value="${T(com.example.demo.model.Role).PARTICIPANT}">Participant</option>
+                    <option th:value="${T(com.example.demo.model.Role).CREATOR}">Creator</option>
+                </select>
+            </div>
+            <button class="btn" type="submit">Create account</button>
+        </form>
+        <p class="muted" style="margin-top:18px;">Already registered? <a th:href="@{/login}">Sign in</a></p>
+    </div>
+</body>
+</html>

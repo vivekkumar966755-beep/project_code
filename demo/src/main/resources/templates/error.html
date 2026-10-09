@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Error')}"></head>
+<body class="app-shell">
+<header th:replace="~{fragments/layout :: header('home')}"></header>
+<main class="page">
+    <div class="card" style="text-align:center;">
+        <h2>Something interrupted this request.</h2>
+        <p class="muted">Return to a safe page and continue.</p>
+        <a class="btn" th:href="@{/}">Home</a>
+    </div>
+</main>
+</body>
+</html>
