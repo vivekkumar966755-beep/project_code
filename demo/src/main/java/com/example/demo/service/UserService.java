@@ -1,32 +1,23 @@
 package com.example.demo.service;
 
-import com.example.demo.model.Role;
-import com.example.demo.model.User;
+import com.example.demo.entity.Role;
+import com.example.demo.entity.User;
 import com.example.demo.repository.UserRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Locale;
+import java.util.List;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
-        this.userRepository = userRepository;
-        this.passwordEncoder = passwordEncoder;
-    }
-
-    @Transactional
     public User registerUser(User user) {
-        if (userRepository.existsByEmail(user.getEmail())) {
-            throw new IllegalArgumentException("An account already exists for this email.");
-        }
-        user.setRole(normalizePublicRole(user.getRole()));
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         return userRepository.save(user);
     }
@@ -35,30 +26,19 @@ public class UserService {
         return userRepository.findByEmail(email);
     }
 
-    public User requireByEmail(String email) {
-        return userRepository.findByEmail(email)
-                .orElseThrow(() -> new IllegalArgumentException("User not found: " + email));
+    public List<User> findAllUsers() {
+        return userRepository.findAll();
     }
 
-    public static Role normalizePublicRole(Role requested) {
-        if (requested == Role.CREATOR) {
-            return Role.CREATOR;
-        }
-        return Role.PARTICIPANT;
+    public void deleteUser(Long id) {
+        userRepository.deleteById(id);
     }
 
-    public static Role parseRole(String raw) {
-        if (raw == null || raw.isBlank()) {
-            return Role.PARTICIPANT;
-        }
-        String normalized = raw.replace("ROLE_", "").trim().toUpperCase(Locale.ROOT);
-        if ("USER".equals(normalized)) {
-            return Role.PARTICIPANT;
-        }
-        try {
-            return Role.valueOf(normalized);
-        } catch (IllegalArgumentException ex) {
-            return Role.PARTICIPANT;
-        }
+    public long countUsers() {
+        return userRepository.count();
+    }
+
+    public List<User> findByRole(Role role) {
+        return userRepository.findByRole(role);
     }
 }

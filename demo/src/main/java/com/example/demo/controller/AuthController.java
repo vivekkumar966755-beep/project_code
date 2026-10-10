@@ -1,49 +1,38 @@
 package com.example.demo.controller;
 
-import com.example.demo.model.Role;
-import com.example.demo.model.User;
+import com.example.demo.entity.User;
 import com.example.demo.service.UserService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
+@RequiredArgsConstructor
 public class AuthController {
 
     private final UserService userService;
 
-    public AuthController(UserService userService) {
-        this.userService = userService;
+    @GetMapping("/login")
+    public String login() {
+        return "auth/login";
     }
 
     @GetMapping("/register")
-    public String showRegistrationForm(Model model) {
-        if (!model.containsAttribute("user")) {
-            User user = new User();
-            user.setRole(Role.PARTICIPANT);
-            model.addAttribute("user", user);
-        }
+    public String registerForm(Model model) {
+        model.addAttribute("user", new User());
         return "auth/register";
     }
 
     @PostMapping("/register")
-    public String registerUser(@ModelAttribute("user") User user, RedirectAttributes redirectAttributes) {
-        try {
-            userService.registerUser(user);
-            redirectAttributes.addFlashAttribute("success", "Account created. Sign in to continue.");
-            return "redirect:/login";
-        } catch (IllegalArgumentException ex) {
-            redirectAttributes.addFlashAttribute("error", ex.getMessage());
-            redirectAttributes.addFlashAttribute("user", user);
-            return "redirect:/register";
+    public String register(@ModelAttribute("user") User user, Model model) {
+        if (userService.findByEmail(user.getEmail()).isPresent()) {
+            model.addAttribute("error", "Email already registered!");
+            return "auth/register";
         }
-    }
-
-    @GetMapping("/login")
-    public String showLoginForm() {
-        return "auth/login";
+        userService.registerUser(user);
+        return "redirect:/login";
     }
 }

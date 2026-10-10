@@ -1,6 +1,7 @@
 package com.example.demo.repository;
 
-import com.example.demo.model.Question;
+import com.example.demo.entity.Question;
+import com.example.demo.entity.Quiz;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -8,6 +9,5 @@ import java.util.List;
 
 @Repository
 public interface QuestionRepository extends JpaRepository<Question, Long> {
-    List<Question> findByQuizId(Long quizId);
-    long countByQuizId(Long quizId);
+    List<Question> findByQuiz(Quiz quiz);
 }

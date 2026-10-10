@@ -1,91 +1,68 @@
 package com.example.demo.controller;
 
-import com.example.demo.model.Question;
-import com.example.demo.model.Quiz;
-import com.example.demo.model.QuizStatus;
-import com.example.demo.model.User;
+import com.example.demo.entity.Question;
+import com.example.demo.entity.Quiz;
+import com.example.demo.entity.User;
 import com.example.demo.service.QuizService;
 import com.example.demo.service.UserService;
-import org.springframework.security.core.Authentication;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.security.Principal;
 import java.util.List;
 
 @Controller
 @RequestMapping("/creator")
+@RequiredArgsConstructor
 public class CreatorController {
 
     private final QuizService quizService;
     private final UserService userService;
 
-    public CreatorController(QuizService quizService, UserService userService) {
-        this.quizService = quizService;
-        this.userService = userService;
-    }
-
     @GetMapping("/dashboard")
-    public String dashboard(Authentication authentication, Model model) {
-        User creator = userService.requireByEmail(authentication.getName());
-        List<Quiz> quizzes = quizService.findByCreator(creator);
-        long pending = quizzes.stream().filter(q -> q.getStatus() == QuizStatus.PENDING).count();
-        long approved = quizzes.stream().filter(q -> q.getStatus() == QuizStatus.APPROVED).count();
-        model.addAttribute("quizzes", quizzes);
+    public String dashboard(Model model, Principal principal) {
+        User creator = userService.findByEmail(principal.getName()).orElseThrow();
+        List<Quiz> quizzes = quizService.getQuizzesByCreator(creator);
         model.addAttribute("quizCount", quizzes.size());
-        model.addAttribute("pendingCount", pending);
-        model.addAttribute("approvedCount", approved);
+        model.addAttribute("pendingCount", quizzes.stream().filter(q -> q.getStatus() == Quiz.Status.PENDING).count());
+        model.addAttribute("approvedCount", quizzes.stream().filter(q -> q.getStatus() == Quiz.Status.APPROVED).count());
         return "creator/dashboard";
     }
 
     @GetMapping("/quizzes")
-    public String myQuizzes(Authentication authentication, Model model) {
-        User creator = userService.requireByEmail(authentication.getName());
-        model.addAttribute("quizzes", quizService.findByCreator(creator));
+    public String myQuizzes(Model model, Principal principal) {
+        User creator = userService.findByEmail(principal.getName()).orElseThrow();
+        model.addAttribute("quizzes", quizService.getQuizzesByCreator(creator));
         return "creator/my-quizzes";
     }
 
     @GetMapping("/quizzes/create")
-    public String showCreateQuizForm() {
+    public String createQuizForm(Model model) {
+        model.addAttribute("quiz", new Quiz());
         return "creator/create-quiz";
     }
 
     @PostMapping("/quizzes/create")
-    public String createQuiz(@RequestParam String title,
-                             @RequestParam int duration,
-                             Authentication authentication) {
-        User creator = userService.requireByEmail(authentication.getName());
-        Quiz savedQuiz = quizService.createQuiz(title, duration, creator);
+    public String createQuiz(@ModelAttribute("quiz") Quiz quiz, Principal principal) {
+        User creator = userService.findByEmail(principal.getName()).orElseThrow();
+        Quiz savedQuiz = quizService.createQuiz(quiz, creator);
         return "redirect:/creator/quizzes/" + savedQuiz.getId() + "/add-questions";
     }
 
     @GetMapping("/quizzes/{quizId}/add-questions")
-    public String showAddQuestionForm(@PathVariable Long quizId, Model model) {
-        Quiz quiz = quizService.requireById(quizId);
+    public String addQuestionForm(@PathVariable Long quizId, Model model) {
+        Quiz quiz = quizService.getQuizById(quizId).orElseThrow();
         model.addAttribute("quiz", quiz);
-        model.addAttribute("questions", quizService.questionsForQuiz(quizId));
+        model.addAttribute("question", new Question());
+        model.addAttribute("questions", quiz.getQuestions());
         return "creator/add-question";
     }
 
     @PostMapping("/quizzes/{quizId}/add-questions")
-    public String addQuestionToQuiz(@PathVariable Long quizId,
-                                    @RequestParam String questionText,
-                                    @RequestParam String optionA,
-                                    @RequestParam String optionB,
-                                    @RequestParam String optionC,
-                                    @RequestParam String optionD,
-                                    @RequestParam String correctoption,
-                                    RedirectAttributes redirectAttributes) {
-        Question question = new Question();
-        question.setQuestionText(questionText);
-        question.setOptionA(optionA);
-        question.setOptionB(optionB);
-        question.setOptionC(optionC);
-        question.setOptionD(optionD);
-        question.setCorrectOption(correctoption);
+    public String addQuestion(@PathVariable Long quizId, @ModelAttribute("question") Question question) {
         quizService.addQuestion(quizId, question);
-        redirectAttributes.addFlashAttribute("success", "Question added.");
         return "redirect:/creator/quizzes/" + quizId + "/add-questions";
     }
 }
