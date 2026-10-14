@@ -5,6 +5,8 @@ import com.example.demo.entity.Result;
 import com.example.demo.entity.User;
 import com.example.demo.service.QuizService;
 import com.example.demo.service.UserService;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -32,11 +34,16 @@ public class ParticipantController {
     }
 
     @GetMapping("/quizzes/{id}/take")
-    public String takeQuiz(@PathVariable Long id, Model model) {
+    public String takeQuiz(@PathVariable Long id, Model model, HttpSession session) {
         Quiz quiz = quizService.getQuizById(id).orElseThrow();
         if (quiz.getStatus() != Quiz.Status.APPROVED) {
             return "redirect:/quizzes";
         }
+        
+        // Explicit Session Management (Servlets & Web Integration)
+        session.setAttribute("ACTIVE_QUIZ_ID", id);
+        session.setAttribute("QUIZ_START_TIME", System.currentTimeMillis());
+
         model.addAttribute("quiz", quiz);
         return "participant/take-quiz";
     }
@@ -45,9 +52,15 @@ public class ParticipantController {
     public String submitQuiz(@PathVariable Long id,
                              @RequestParam Map<String, String> params,
                              Principal principal,
+                             HttpSession session,
+                             HttpServletRequest request,
                              Model model) {
         Quiz quiz = quizService.getQuizById(id).orElseThrow();
         User participant = userService.findByEmail(principal.getName()).orElseThrow();
+
+        // Invalidate active session exam tokens
+        session.removeAttribute("ACTIVE_QUIZ_ID");
+        session.removeAttribute("QUIZ_START_TIME");
 
         List<String> answers = new ArrayList<>();
         quiz.getQuestions().forEach(q -> {
